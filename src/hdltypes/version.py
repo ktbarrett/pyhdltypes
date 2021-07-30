@@ -3,7 +3,7 @@ minor = "0"
 patch = "0"
 release = "dev0"
 
-if release != "":
-    __version__ = f"{major}.{minor}.{patch}.{release}"
-else:
-    __version__ = f"{major}.{minor}.{patch}"
+__version__ = f"{major}.{minor}.{patch}"
+
+if release != "":  # pragma: no cover
+    __version__ += f".{release}"
