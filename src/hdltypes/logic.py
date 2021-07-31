@@ -46,7 +46,9 @@ class StdLogic(Logic):
         else:
             _repr = None
         if _repr is None or _repr not in cls.__values__:
-            raise ValueError(f"{value!r} is not constructible into a {cls.__qualname__}")
+            raise ValueError(
+                f"{value!r} is not constructible into a {cls.__qualname__}"
+            )
         return cls._make(_repr)
 
     if not TYPE_CHECKING:
