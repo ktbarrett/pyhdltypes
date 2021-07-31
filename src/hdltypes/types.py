@@ -1,5 +1,7 @@
 from abc import abstractmethod
-from typing import Protocol, TypeVar, runtime_checkable
+from typing import TypeVar
+
+from hdltypes.compat import Protocol, runtime_checkable
 
 Self = TypeVar("Self")
 

@@ -1,6 +1,6 @@
 import pytest
 
-from hdltypes.logic import StdLogic, X01Z, Bit
+from hdltypes.logic import X01Z, Bit, StdLogic
 
 
 def test_construct():
