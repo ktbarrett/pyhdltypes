@@ -11,5 +11,6 @@ profile = "black"
 exclude_lines = [
     "pragma: no cover",
     "\\.\\.\\.",
-    "raise\\s+NotImplementedError"
+    "raise\\s+NotImplementedError",
+    "if\\s+(not)?\\s+(typing\\.)?TYPE_CHECKING:"
 ]
