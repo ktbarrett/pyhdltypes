@@ -1,7 +1,7 @@
 def test_version():
-    import hdltypes
+    import hdltypes.version
 
-    hdltypes.__version__
+    hdltypes.version.__version__
 
 
 def test_types():
