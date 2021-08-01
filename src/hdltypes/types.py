@@ -8,7 +8,14 @@ Self = TypeVar("Self")
 
 @runtime_checkable
 class Logic(Protocol):
-    """ """
+    """
+    Protocol for a type that supports logical operations
+
+    A type that implements this :py:class:`~typing.Protocol` supports the logical binary
+    operators:
+    ``&``, ``|``, ``^``, symmetrically with another value of the same type or a subtype;
+    and the ``~`` unary operator.
+    """
 
     @abstractmethod
     def __and__(self: Self, other: Self) -> Self:

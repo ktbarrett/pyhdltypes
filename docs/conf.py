@@ -32,6 +32,7 @@ release = __version__
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.intersphinx",
     "sphinxcontrib.spelling",
     "sphinx_rtd_theme",
 ]
@@ -62,3 +63,8 @@ html_static_path = []
 # -- Autodoc configuration ---------------------------------------------------
 
 autodoc_member_order = "bysource"
+python_use_unqualified_type_names = True
+
+# -- Intersphinx configuration -----------------------------------------------
+
+intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
