@@ -5,7 +5,15 @@ import nox
 def tests(session):
     session.install(".")
     session.install("pytest", "pytest-coverage", "coverage", "pytest-mypy-plugins")
-    session.run("pytest", "--cov=hdltypes", "--cov-branch", *session.posargs)
+    session.run(
+        "pytest",
+        "--cov=hdltypes",
+        "--cov-branch",
+        "--doctest-modules",
+        "src/",  # src/ **MUST** come before test due to issue with doctest-modules
+        "tests/",
+        *session.posargs
+    )
     session.run("coverage", "xml")
 
 
