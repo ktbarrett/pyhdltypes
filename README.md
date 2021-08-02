@@ -1,76 +1,14 @@
+![Tests](https://github.com/ktbarrett/pyhdltypes/actions/workflows/tests.yaml/badge.svg)
+[![Documentation Status](https://readthedocs.org/projects/pyhdltypes/badge/?version=latest)](https://pyhdltypes.readthedocs.io/en/latest/?badge=latest)
+[![codecov](https://codecov.io/gh/ktbarrett/pyhdltypes/branch/dev/graph/badge.svg?token=1GDBKHF5IM)](https://codecov.io/gh/ktbarrett/pyhdltypes)
+
+
 # pyhdltypes
 
-Models of VHDL datatypes in Python.
+pyhdltypes is a library providing accurate and high performance Python models of common VHDL and Verilog data types.
 
-## Datatypes And Hierarchy
+## Installation
 
-### StdLogic / StdULogic
-
-9-value (`U`, `X`, `0`, `1`, `L`, `H`, `W`, `Z`, `-`) logic type as seen in VHDL.
-Because these are value types and not signals, there is no resolving; so `StdLogic` is an alias for `StdULogic`.
-
-### Logic
-
-4-value (`X`, `Z`, `0`, `1`) logic type as seen in Verilog.
-Proper subtype of `StdULogic`.
-
-### Bit
-
-2-value (`0`, `1`) bit type.
-Proper subtype of `Logic` and `StdULogic`.
-
-### Array
-
-Heterogenous (and thus generic) array datatype.
-Arrays have fixed size and arbitrary indexing schemes.
-Arrays can be concatenated.
-
-### Record
-
-Record container type as seen in VHDL.
-Basically a dataclass, but you inherit instead of decorate.
-
-### StdLogicVector / StdULogicVector
-
-`Array` of `StdULogic`.
-Supports bitwise logic operations like `&`, `|`, `^`, and `~`.
-
-### LogicArray
-
-`Array` of `Logic`.
-Proper subtype of `StdULogicVector`.
-
-### BitArray
-
-`Array` of `Bit`.
-Proper subtype of `LogicArray` and `StdULogicVector`.
-
-### Unsigned
-
-Modeled after VHDL's `unsigned` type.
-Proper subtype of `BitArray`.
-Supports arithmetic including: `+`, `-`, `*`, `/`, `%`, `rem`, `>>`, `<<`;
-and comparisons like: `<`, `<=`, `>`, and `>=`.
-
-### Signed
-
-Modeled after VHDL's `signed` type.
-Proper subtype of `BitArray`.
-Supports arithmetic including: `+`, `-`, `*`, `/`, `%`, `rem`, `>>`, `<<`;
-and comparisons like: `<`, `<=`, `>`, and `>=`.
-
-### Ufixed
-
-Modeled after VHDL's `ufixed` type.
-Proper subtype of `BitArray`.
-Support arithmetic including: `+`, `-`, `*`, `/`, `%`, `rem`, `>>`, `<<`;
-comparisons like: `<`, `<=`, `>`, and `>=`;
-and fixed point operations like `resize`.
-
-### Sfixed
-
-Modeled after VHDL's `sfixed` type.
-Proper subtype of `BitArray`.
-Support arithmetic including: `+`, `-`, `*`, `/`, `%`, `rem`, `>>`, `<<`;
-comparisons like: `<`, `<=`, `>`, and `>=`;
-and fixed point operations like `resize`.
+```
+pip install hdltypes
+```
