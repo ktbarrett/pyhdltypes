@@ -27,3 +27,10 @@ Value types that implement the :class:`~hdltypes.types.Logic` protocol.
 
 .. autoclass:: hdltypes.logic.Bit
     :members:
+
+Utility Types
+=============
+
+.. autoclass:: hdltypes.range.Range
+    :members:
+
