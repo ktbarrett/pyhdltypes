@@ -9,6 +9,15 @@ pyhdltypes is a library providing accurate and high performance Python models of
 
 ## Installation
 
+
+pyhdltypes is a pure Python package and can be installed with ``pip``.
+
 ```
 pip install hdltypes
+```
+
+Or you can get the latest version by installing from Github.
+
+```
+pip install git+https://github.com/ktbarrett/pyhdltypes
 ```
