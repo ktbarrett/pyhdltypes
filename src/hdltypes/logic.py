@@ -1,3 +1,7 @@
+# Copyright cocotb contributors
+# Copyright Kaleb Barrett
+# Licensed under the Revised BSD License, see LICENSE for details.
+# SPDX-License-Identifier: BSD-3-Clause
 from functools import lru_cache
 from typing import TYPE_CHECKING, Dict, Optional, Type, TypeVar, Union, cast
 
@@ -32,9 +36,10 @@ class StdLogic(Logic):
     """
     A 9-value logic type
 
+    The values of this types are: ``U``, ``X``, ``0``, ``1``, ``Z``, ``W``, ``L``,
+    ``H``, and ``-``.
     The value and semantics of this type are defined in IEEE 1164 and are similar to the
-    ``std_ulogic`` type in VHDL. The values of this types are: ``U``, ``X``, ``0``,
-    ``1``, ``Z``, ``W``, ``L``, ``H``, and ``-``.
+    ``std_ulogic`` type in VHDL.
 
     StdLogics are convertible to and from :py:class:`str`, :py:class:`bool`,
     :py:class:`int`, and subtypes of :class:`StdLogic`.
@@ -47,27 +52,21 @@ class StdLogic(Logic):
 
         >>> StdLogic(False)  # construct from bool
         StdLogic('0')
-
         >>> StdLogic(False)  # construct from int
         StdLogic('0')
-
         >>> StdLogic("z")  # construct from (lowercase) str
         StdLogic('Z')
+        >>> StdLogic(X01Z("Z"))  # convert subtype
+        StdLogic('Z')
+        >>> StdLogic()  # defaults to "U"
+        StdLogic('U')
 
         >>> str(StdLogic("z"))  # cast to str (always uppercase)
         'Z'
-
         >>> bool(StdLogic(1))  # cast to bool
         True
-
         >>> int(StdLogic(0))  # cast to int
         0
-
-        >>> StdLogic(X01Z("Z"))  # convert subtype
-        StdLogic('Z')
-
-        >>> StdLogic()  # defaults to "U"
-        StdLogic('U')
 
     .. note::
         Attempting to cast a StdLogic value that is not ``0`` or ``1`` to an
@@ -81,10 +80,8 @@ class StdLogic(Logic):
 
         >>> StdLogic(0) | StdLogic("X")
         StdLogic('X')
-
         >>> Bit(0) ^ StdLogic("1")
         StdLogic('1')
-
         >>> ~StdLogic("L")
         StdLogic('1')
 
@@ -98,11 +95,9 @@ class StdLogic(Logic):
 
         >>> StdLogic(0) == Bit(0)  # subtypes equate
         True
-
         >>> a = {StdLogic(0)}
         >>> Bit(0) in a        # subtypes are substitutable in hashed collections
         True
-
         >>> isinstance(Bit(0), StdLogic)  # subtypes pass isinstance checks
         True
 
