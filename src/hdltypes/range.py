@@ -15,8 +15,8 @@ class Range(Sequence[int]):
     but implements HDL-like inclusive right bounds,
     using the names :attr:`left` and :attr:`right` instead of ``start`` and ``stop`` to
     mimic VHDL.
-    Range directionality can be specified using ``'to'`` or ``'downto'`` between the
-    left and right bounds.
+    Range direction can be specified using ``'to'`` or ``'downto'`` between the left
+    and right bounds.
     Not specifying a direction will cause the direction to be inferred.
 
     .. code-block:: python3

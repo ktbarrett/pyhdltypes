@@ -16,3 +16,10 @@ pyhdltypes
 subtypes
 subtype
 Implementers
+instantiable
+HDL
+unary
+hashable
+Args
+Roadmap
+Github
