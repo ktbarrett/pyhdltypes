@@ -4,3 +4,5 @@ htmlcov/
 coverage.xml
 *.egg-info
 /docs_out/
+/build/
+/dist/
