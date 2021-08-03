@@ -82,3 +82,39 @@ pyhdltypes is a pure Python package and can be installed with ``pip``.
 
 .. warning::
     PyPI release not yet available
+
+Roadmap
+=======
+
+The basic types and features will be implemented as such.
+
+* :class:`~hdltypes.types.Logic`\ : protocol for types that support logical operators
+* :class:`~hdltypes.logic.StdLogic`\ : 9-value logic type
+* :class:`~hdltypes.logic.X01Z`\ : 4-value logic type
+* :class:`~hdltypes.logic.Bit`\ : 2-value logic type
+* :class:`~hdltypes.range.Range`\ : HDL Range type and Array indexing scheme
+* :class:`~hdltypes.types.Array`\ : protocol for immutable array-like types
+* :class:`~hdltypes.types.MutableArray`\ : protocol for mutable array-like types
+* :class:`~hdltypes.logic.FrozenGArray`\ : immutable generic array type
+* :class:`~hdltypes.array.GArray`\ : mutable version of ``FrozenGArray``
+* :class:`~hdltypes.logic_array.FrozenLogicArray`\ : immutable generic ``Logic`` array type that supports element-wise logical operators
+* :class:`~hdltypes.logic_array.LogicArray`\ : mutable version of ``FrozenLogicArray``
+* :class:`~hdltypes.logic_array.StdLogicArray`\ : mutable ``LogicArray`` of ``StdLogic``
+* :class:`~hdltypes.logic_array.X01ZArray`\ : mutable ``LogicArray``of ``X01Z``
+* :class:`~hdltypes.logic_array.BitArray`\ : mutable ``LogicArray`` of ``Bit``
+* :class:`~hdltypes.types.Integer`\ : protocol for integer-like types, supports logical and arithmetic operators
+* :class:`~hdltypes.integer.FrozenUnsigned`\ : immutable array of ``Bit`` / ``Integer`` type with unsigned representation
+* :class:`~hdltypes.integer.Unsigned`\ : mutable version of ``FrozenUnsigned``
+* :class:`~hdltypes.integer.FrozenSigned`\ : immutable array of ``Bit``  / ``Integer`` type with two's complement representation
+* :class:`~hdltypes.integer.Signed`\ : mutable version of ``FrozenSigned``
+* :class:`~hdltypes.types.FixedPoint`\ : protocol for fixed-point-like types, supports logical and arithmetic operators, resizing, rounding, and conversion to and from :py:class:`float`
+* :class:`~hdltypes.fixed.FrozenUfixed`\ : immutable array of ``Bit`` / ``FixedPoint`` type with unsigned representation
+* :class:`~hdltypes.fixed.Ufixed`\ : mutable version of ``FrozenUfixed``
+* :class:`~hdltypes.fixed.FrozenSfixed`\ : immutable array of ``Bit`` / ``FixedPoint`` type with two's complement representation
+* :class:`~hdltypes.fixed.Sfixed`\ : mutable version of ``FrozenSfixed``
+* :class:`~hdltypes.types.FixedPoint`\ : protocol for floating-point-like types, supports logical and arithmetic operators, resizing, rounding, and conversion to and from :py:class:`float`
+* :class:`~hdltypes.float.FrozenFloat`\ : immutable array of ``Bit`` / floating point type
+* :class:`~hdltypes.float.Float`\ : mutable version of ``FrozenFloat``
+
+The ``Frozen`` classes may not be instantiable classes, but only for typing purposes.
+However, making them instantiable may be rather easy, so that decision is still up in the air.
