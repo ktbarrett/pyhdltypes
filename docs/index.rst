@@ -10,14 +10,19 @@ Use Case
 
 Developing HDL implementation of complex algorithms usually involves multiple people/teams.
 
-* Algorithms designers
-   * Design the algorithm at the high-level, but may be unaware of the constraints of implementation
-   * Most worried about algorithmic performance
-* Implementers
-   * Translate the algorithm into a reasonable implementation in HDL
-   * Most worried about feasibility of a particular algorithm design (resource utilization, clock speed)
-* Testers
-   * Ensure that the implementation meets requirements and is implemented correctly
+**Algorithms designers**
+
+* Design the algorithm at the high-level, but may be unaware of the constraints of implementation
+* Most worried about algorithmic performance
+
+**Implementers**
+
+* Translate the algorithm into a reasonable implementation in HDL
+* Most worried about feasibility of a particular algorithm design (resource utilization, clock speed)
+
+**Testers**
+
+* Ensure that the implementation meets requirements and is implemented correctly
 
 All of these groups need an executable model of the algorithm for one or more reasons.
 
@@ -38,8 +43,7 @@ However, each group has different priorities when it comes to the model.
 Existing Solutions
 ==================
 
-MATLAB
-~~~~~~
+**MATLAB**
 
 * Very easy to prototype algorithms with.
 * MATLAB has `some` capability for modeling hardware (e.g. Simulink and/or the fixed point toolkit).
@@ -47,8 +51,7 @@ MATLAB
 * If written improperly, it can be rather slow to execute.
 * MATLAB is reasonably familiar with many groups.
 
-C++ and SystemC
-~~~~~~~~~~~~~~~
+**C++ and SystemC**
 
 * Can execute fast.
 * Not as easy to prototype with as other solutions.
@@ -57,8 +60,7 @@ C++ and SystemC
 * SystemC has overall less familiarity with non-EDA-adjacent groups.
 * C++ is less familiar with many groups.
 
-Python
-~~~~~~
+**Python**
 
 * Can execute fast using C/C++ extensions (e.g. numpy) or compilation (e.g. Cython, Nuitka).
 * C++ extensions are fairly easy (thanks to pybind11).
