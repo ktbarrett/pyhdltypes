@@ -80,7 +80,7 @@ pyhdltypes is a pure Python package and can be installed with ``pip``.
 
     pip install hdltypes
 
-Or you can get the latest version by installing from github.
+Or you can get the latest version by installing from Github.
 
 .. code-block::
 
