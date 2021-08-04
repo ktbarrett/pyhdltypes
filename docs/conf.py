@@ -33,6 +33,7 @@ release = __version__
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
     "sphinxcontrib.spelling",
     "sphinx_rtd_theme",
 ]
