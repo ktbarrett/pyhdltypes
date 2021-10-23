@@ -1,6 +1,0 @@
-- case: test_logic_on_builtins
-  main: |
-    from hdltypes.types import Logic
-
-    a: Logic = 0
-    c: Logic = "test"  # E: Incompatible types in assignment (expression has type "str", variable has type "Logic")

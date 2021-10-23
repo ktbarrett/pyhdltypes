@@ -5,8 +5,6 @@
 from functools import lru_cache
 from typing import TYPE_CHECKING, Dict, Optional, Type, TypeVar, Union, cast
 
-from hdltypes.types import Logic
-
 LogicLiteralT = Union[str, int, bool]
 LogicConstructibleT = Union[LogicLiteralT, "StdLogic"]
 
@@ -32,7 +30,7 @@ _H = 7
 __ = 8
 
 
-class StdLogic(Logic):
+class StdLogic:
     """
     A 9-value logic type
 
