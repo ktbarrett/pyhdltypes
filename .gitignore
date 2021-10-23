@@ -6,3 +6,4 @@ coverage.xml
 /docs_out/
 /build/
 /dist/
+.venv/
