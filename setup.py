@@ -45,7 +45,7 @@ setup(
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     package_data={"hdltypes": ["py.typed"]},
-    python_requires=">=3.6, <4",
+    python_requires=">=3.8, <4",
     install_requires=([] + typing_dependency),
     entry_points={},
     zip_safe=False,
