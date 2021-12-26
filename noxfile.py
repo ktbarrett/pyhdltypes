@@ -29,3 +29,10 @@ def dev(session: nox.Session) -> None:
     session.install("isort", "black", "mypy", "flake8", "nox")
     session.install("-e", ".")
     session.run("bash", external=True)
+
+
+@nox.session(reuse_venv=True)
+def fix(session: nox.Session) -> None:
+    session.install("isort", "black")
+    session.run("isort", "--profile=black", ".")
+    session.run("black", ".")
