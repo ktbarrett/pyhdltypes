@@ -3,10 +3,9 @@
 # Licensed under the Revised BSD License, see LICENSE for details.
 # SPDX-License-Identifier: BSD-3-Clause
 from functools import lru_cache
-from typing import TYPE_CHECKING, Dict, Optional, Type, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Dict, Optional, Type, TypeVar, Union
 
-LogicLiteralT = Union[str, int, bool]
-LogicConstructibleT = Union[LogicLiteralT, "StdLogic"]
+LogicConstructibleT = Union[str, "StdLogic"]
 
 Self = TypeVar("Self", bound="StdLogic")
 
@@ -15,8 +14,7 @@ Self = TypeVar("Self", bound="StdLogic")
 #
 # A subtype must inherit from StdLogic, or a known subclass of StdLogic.
 # The subtype will define a `__values__` class attribute that is a non-empty list of
-# the StdLogic value representations listed directly below. The first element of that
-# list will be used as the default value.
+# the StdLogic value representations listed directly below.
 
 
 _U = 0
@@ -39,36 +37,14 @@ class StdLogic:
     The value and semantics of this type are defined in IEEE 1164 and are similar to the
     ``std_ulogic`` type in VHDL.
 
-    StdLogics are convertible to and from :py:class:`str`, :py:class:`bool`,
-    :py:class:`int`, and subtypes of :class:`StdLogic`.
-    Permissible convertible values include: ``0``, ``1``, ``False``, ``True``, ``"U"``,
-    ``"X"``, ``"0"``, ``"1"``, ``"Z"``, ``"W"``, ``"L"``, ``"H"``, ``"-"``, and all
-    lowercase versions of the strings.
-    The default value is ``U``.
+    StdLogics are constructable from string literals or are copy constructable from any subclass.
 
     .. code-block:: python3
 
-        >>> StdLogic(False)  # construct from bool
-        StdLogic('0')
-        >>> StdLogic(False)  # construct from int
-        StdLogic('0')
         >>> StdLogic("z")  # construct from (lowercase) str
         StdLogic('Z')
         >>> StdLogic(X01Z("Z"))  # convert subtype
         StdLogic('Z')
-        >>> StdLogic()  # defaults to "U"
-        StdLogic('U')
-
-        >>> str(StdLogic("z"))  # cast to str (always uppercase)
-        'Z'
-        >>> bool(StdLogic(1))  # cast to bool
-        True
-        >>> int(StdLogic(0))  # cast to int
-        0
-
-    .. note::
-        Attempting to cast a StdLogic value that is not ``0`` or ``1`` to an
-        :py:class:`int` or :py:class:`bool` will result in a :exc:`ValueError`.
 
     StdLogics support logical operations ``&``, ``|``, ``^``, and ``~``;
     and can be used in logical operations with subtypes,
@@ -84,7 +60,7 @@ class StdLogic:
         StdLogic('1')
 
     StdLogic supports creating subtypes (like :class:`X01Z` and :class:`Bit`);
-    see implementation for more details.
+    see the module file for more details.
     Values of a subtype of StdLogic will hash the same and equate, so that they behave
     as proper subtypes.
     This results in what may seem like atypical behavior, but it is type-safe.
@@ -111,22 +87,16 @@ class StdLogic:
     def _make(cls: Type[Self], repr: int) -> Self:
         self = super().__new__(cls)
         self._repr = repr
-        return cast(Self, self)
+        return self
 
-    def __new__(cls: Type[Self], value: Optional[LogicConstructibleT] = None) -> Self:
+    def __new__(cls: Type[Self], value: Union[str, "StdLogic"]) -> Self:
         _repr: Optional[int]
-        if value is None:
-            # default
-            return cls._make(cls.__values__[0])
-        elif value in _literal_repr:
-            # convert literal
-            _repr = _literal_repr[cast(LogicLiteralT, value)]
-        elif isinstance(value, StdLogic):
+        if isinstance(value, StdLogic):
             # convert subtype
             _repr = value._repr
         else:
-            # type error
-            _repr = None
+            # convert literal
+            _repr = _literal_repr.get(value)
         if _repr is None or _repr not in cls.__values__:
             raise ValueError(
                 f"{value!r} is not constructible into a {cls.__qualname__}"
@@ -136,20 +106,6 @@ class StdLogic:
     if not TYPE_CHECKING:
         # mypy doesn't like using lru_cache on __new__
         __new__ = lru_cache(maxsize=None)(__new__)
-
-    def __int__(self) -> int:
-        if self._repr == _0:
-            return 0
-        elif self._repr == _1:
-            return 1
-        raise ValueError(f"Can convert non-0/1 value {self!r} to int")
-
-    def __bool__(self) -> int:
-        if self._repr == _0:
-            return False
-        elif self._repr == _1:
-            return True
-        raise ValueError(f"Can convert non-0/1 value {self!r} to bool")
 
     def __str__(self) -> str:
         return _str_table[self._repr]
@@ -220,14 +176,12 @@ class Bit(X01Z):
     __values__ = [_0, _1]
 
 
-_literal_repr: Dict[LogicLiteralT, int] = {
+_literal_repr: Dict[str, int] = {
     "U": _U,
     "u": _U,
     "X": _X,
     "x": _X,
-    0: _0,
     "0": _0,
-    1: _1,
     "1": _1,
     "Z": _Z,
     "z": _Z,
