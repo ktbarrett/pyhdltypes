@@ -5,7 +5,6 @@ from hdltypes.range import Range
 from hdltypes.types import AbstractArray
 
 T = TypeVar("T")
-S = TypeVar("S")
 Self = TypeVar("Self", bound="Array[object]")
 
 
@@ -30,16 +29,16 @@ class Array(AbstractArray[T]):
         return self._range
 
     @overload
-    def __getitem__(self, item: int) -> T:
+    def __getitem__(self: Self, item: int) -> T:
         ...
 
     @overload
-    def __getitem__(self, item: slice) -> "Array[T]":
+    def __getitem__(self: Self, item: slice) -> Self:
         ...
 
-    def __getitem__(self, item: Union[int, slice]) -> Union[T, "Array[T]"]:
+    def __getitem__(self: Self, item: Union[int, slice]) -> Union[T, Self]:
         if isinstance(item, int):
-            return self._value[self._index(item)]
+            return cast(T, self._value[self._index(item)])
         elif isinstance(item, slice):
             left = item.start if item.start is not None else self.left
             right = item.stop if item.stop is not None else self.right
@@ -47,7 +46,7 @@ class Array(AbstractArray[T]):
                 raise ValueError("do not specify the step in the index")
             left_idx = self._index(left)
             right_idx = self._index(right)
-            return Array(
+            return type(self)(
                 self._value[left_idx:right_idx], Range(left, self.direction, right)
             )
         else:
@@ -86,15 +85,25 @@ class Array(AbstractArray[T]):
                 f"expected index to be of type int or slice, not {type(item).__qualname__}"
             )
 
-    def __add__(self, other: "Array[S]") -> "Array[Union[T, S]]":
-        if not isinstance(other, Array):
-            return NotImplemented
-        return Array(chain(self, other))
+    @overload
+    def concat(self: Self, other: T) -> Self:
+        ...
 
-    def __eq__(self: Self, other: object) -> bool:
-        if type(other) is type(self):
-            return self._value == cast(Self, other)._value
-        return NotImplemented
+    @overload
+    def concat(self: Self, other: Self) -> Self:
+        ...
+
+    def concat(self: Self, other: Union[T, Self]) -> Self:
+        if not isinstance(other, type(self)):
+            return type(self)(chain(self, (other,)))
+        else:
+            return type(self)(chain(self, other))
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, type(self)):
+            return self._value == other._value
+        else:
+            return NotImplemented
 
     __hash__: None  # type: ignore
 
