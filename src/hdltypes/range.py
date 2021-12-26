@@ -160,14 +160,18 @@ class Range(Sequence[int]):
             return self._range[item]
         elif isinstance(item, slice):
             return type(self).from_range(self._range[item])
-        raise TypeError(
-            "indices must be integers or slices, not {}".format(type(item).__qualname__)
-        )
+        else:
+            raise TypeError(
+                "indices must be integers or slices, not {}".format(
+                    type(item).__qualname__
+                )
+            )
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, type(self)):
             return self._range == other._range
-        return NotImplemented
+        else:
+            return NotImplemented
 
     def __hash__(self) -> int:
         return hash(self._range)
