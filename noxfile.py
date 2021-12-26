@@ -2,7 +2,7 @@ import nox
 
 
 @nox.session
-def tests(session):
+def tests(session: nox.Session) -> None:
     session.install(".")
     session.install("pytest", "pytest-coverage", "coverage", "pytest-mypy-plugins")
     session.run(
@@ -18,7 +18,14 @@ def tests(session):
 
 
 @nox.session
-def docs(session):
+def docs(session: nox.Session) -> None:
     session.install(".")
     session.install("-r", "docs/requirements.txt")
     session.run("sphinx-build", "docs/", "docs_out/", *session.posargs)
+
+
+@nox.session
+def dev(session: nox.Session) -> None:
+    session.install("isort", "black", "mypy", "flake8", "nox")
+    session.install("-e", ".")
+    session.run("bash", external=True)
