@@ -1,6 +1,5 @@
 import os
 import pathlib
-import sys
 from typing import Any, Dict, cast
 
 from setuptools import find_packages, setup
@@ -19,11 +18,6 @@ long_description = readme_file.read_text(encoding="utf-8")
 
 version_file = here / "src" / "hdltypes" / "version.py"
 version = get_version(version_file)
-
-if sys.version_info < (3, 8):
-    typing_dependency = ["typing_extensions"]
-else:
-    typing_dependency = []
 
 
 setup(
@@ -46,7 +40,7 @@ setup(
     packages=find_packages(where="src"),
     package_data={"hdltypes": ["py.typed"]},
     python_requires=">=3.8, <4",
-    install_requires=([] + typing_dependency),
+    install_requires=[],
     entry_points={},
     zip_safe=False,
 )

@@ -1,0 +1,4 @@
+pytest
+pytest-coverage
+coverage
+pytest-mypy-plugins

@@ -52,9 +52,9 @@ class StdLogic:
 
     .. code-block:: python3
 
-        >>> StdLogic(0) | StdLogic("X")
+        >>> StdLogic("0") | StdLogic("X")
         StdLogic('X')
-        >>> Bit(0) ^ StdLogic("1")
+        >>> Bit("0") ^ StdLogic("1")
         StdLogic('1')
         >>> ~StdLogic("L")
         StdLogic('1')
@@ -67,12 +67,12 @@ class StdLogic:
 
     .. code-block:: python3
 
-        >>> StdLogic(0) == Bit(0)  # subtypes equate
+        >>> StdLogic("0") == Bit("0")  # subtypes equate
         True
-        >>> a = {StdLogic(0)}
-        >>> Bit(0) in a        # subtypes are substitutable in hashed collections
+        >>> a = {StdLogic("0")}
+        >>> Bit("0") in a        # subtypes are substitutable in hashed collections
         True
-        >>> isinstance(Bit(0), StdLogic)  # subtypes pass isinstance checks
+        >>> isinstance(Bit("0"), StdLogic)  # subtypes pass isinstance checks
         True
 
     """
