@@ -1,7 +1,12 @@
 [flake8]
-exclude =
+
+# flake8 before 4.0.2 does not include .nox by default
+# docs/config.py does not act like a typical Python source and this bothers flake8
+extend-exclude =
     .nox/
-    .venv/
     docs/
-max-complexity = 10
+
+max-complexity = 8
+
+# hard max before complaining, black will try to keep this below 88 automatically
 max-line-length = 120

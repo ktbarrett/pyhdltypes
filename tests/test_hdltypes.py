@@ -1,10 +1,4 @@
-def test_version():
+def test_version() -> None:
     import hdltypes.version
 
     hdltypes.version.__version__
-
-
-def test_types():
-    import hdltypes.types
-
-    hdltypes.types.Logic

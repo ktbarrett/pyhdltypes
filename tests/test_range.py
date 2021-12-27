@@ -6,7 +6,7 @@ import pytest
 from hdltypes.range import Range
 
 
-def test_to_range():
+def test_to_range() -> None:
     r = Range(1, "to", 8)
     assert r.left == 1
     assert r.direction == "to"
@@ -28,7 +28,7 @@ def test_to_range():
     assert r.count(10) == 0
 
 
-def test_downto_range():
+def test_downto_range() -> None:
     r = Range(4, "downto", -3)
     assert r.left == 4
     assert r.direction == "downto"
@@ -50,7 +50,7 @@ def test_downto_range():
     assert r.count(10) == 0
 
 
-def test_null_range():
+def test_null_range() -> None:
     r = Range(1, "downto", 4)
     assert r.left == 1
     assert r.direction == "downto"
@@ -66,35 +66,26 @@ def test_null_range():
     assert r.count(4) == 0
 
 
-def test_bad_arguments():
-    with pytest.raises(TypeError):
-        Range(1, "to")  # nowhere ...
-    with pytest.raises(TypeError):
-        Range("1", "to", 5)
-    with pytest.raises(ValueError):
-        Range(1, "BAD DIRECTION", 3)
-
-
-def test_equality():
+def test_equality() -> None:
     assert Range(7, "downto", -7) == Range(7, "downto", -7)
     assert Range(7, "downto", -7) != Range(0, "to", 8)
     assert Range(1, "to", 0) == Range(8, "to", -8)  # null ranges are all equal?
     assert Range(1, "to", 4) != 789
 
 
-def test_other_constructors():
+def test_other_constructors() -> None:
     assert Range(1, 8) == Range(1, "to", 8)
     assert Range(3, -4) == Range(3, "downto", -4)
     assert Range(left=1, right=8) == Range(1, "to", 8)
     assert Range(left=3, right=-4) == Range(3, "downto", -4)
 
 
-def test_use_in_set():
+def test_use_in_set() -> None:
     assert len({Range(1, "to", 8), Range(1, "to", 8)}) == 1
     assert len({Range(1, "to", 8), Range(8, "downto", 1)}) == 2
 
 
-def test_conversions():
+def test_conversions() -> None:
     t = range(10, 1, -1)
     r = Range.from_range(t)
     assert r.left == 10
@@ -103,31 +94,21 @@ def test_conversions():
     assert r.to_range() == t
 
 
-def test_repr():
+def test_repr() -> None:
     r = Range(5, "to", 9)
     assert eval(repr(r)) == r
 
 
-def test_uppercase_in_direction():
+def test_uppercase_in_direction() -> None:
     r = Range(1, "TO", 8)
     assert r.direction == "to"
 
 
-def test_bad_direction():
+def test_bad_direction() -> None:
     with pytest.raises(ValueError):
         Range(1, "nope", 8)
 
 
-def test_bad_bound():
-    with pytest.raises(TypeError):
-        Range(object(), "to", 8)
-
-
-def test_bad_step():
+def test_bad_step() -> None:
     with pytest.raises(ValueError):
         Range.from_range(range(10, 5, -2))
-
-
-def test_bad_getitem():
-    with pytest.raises(TypeError):
-        Range(10, "downto", 4)["8"]
