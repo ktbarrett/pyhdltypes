@@ -85,19 +85,16 @@ class Array(AbstractArray[T]):
                 f"expected index to be of type int or slice, not {type(item).__qualname__}"
             )
 
-    @overload
-    def concat(self: Self, other: T) -> Self:
-        ...
-
-    @overload
     def concat(self: Self, other: Self) -> Self:
-        ...
-
-    def concat(self: Self, other: Union[T, Self]) -> Self:
-        if not isinstance(other, type(self)):
-            return type(self)(chain(self, (other,)))
-        else:
+        """
+        Concatenates two arrays
+        """
+        if isinstance(other, type(self)):
             return type(self)(chain(self, other))
+        else:
+            raise TypeError(
+                f"Cannot concatenate {type(self).__qualname__!r} object and {type(other).__qualname__!r} object"
+            )
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, type(self)):

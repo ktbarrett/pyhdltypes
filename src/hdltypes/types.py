@@ -20,23 +20,30 @@ Self = TypeVar("Self")
 @runtime_checkable
 class AbstractConstArray(Collection[T_co], Reversible[T_co], Protocol):
     """
-    A fixed-length Sequence-like type that uses a Range as an indexing scheme
+    A fixed-length Sequence-like type that uses a :class:`~hdltypes.range.Range` to describe the array's indexing scheme
+
+    Supports :py:func:`len`, iteration, :py:func:`reversed` iteration, and indexing.
     """
 
     @abstractproperty
     def range(self) -> Range:
-        ...
+        """
+        Returns the :class:`~hdltypes.range.Range` object that describes the array's indexing scheme
+        """
 
     @property
     def left(self) -> int:
+        """Returns the left index bound of the array"""
         return self.range.left
 
     @property
     def right(self) -> int:
+        """Returns the right index bound of the array"""
         return self.range.right
 
     @property
     def direction(self) -> str:
+        """Returns the direction ('to' or 'downto') of the indexes of the array"""
         return self.range.direction
 
     def __len__(self) -> int:
@@ -70,7 +77,9 @@ class AbstractConstArray(Collection[T_co], Reversible[T_co], Protocol):
 @runtime_checkable
 class AbstractArray(AbstractConstArray[T], Protocol):
     """
-    A mutable version of Array
+    A mutable version of :class:`~hdltypes.types.AbstractConstArray`
+
+    Supports setting indexes.
     """
 
     @overload
@@ -87,10 +96,10 @@ class AbstractArray(AbstractConstArray[T], Protocol):
 @runtime_checkable
 class Number(Protocol):
     """
-    A number type
+    Protocol for a number-like type that support arithmetic operations
 
     Specifically designed to allow writing generic functions that work with both
-    :py:class:`int`, :py::class:`float`, :class:`Unsigned`, :class:`Signed`,
+    :py:class:`int`, :py:class:`float`, :class:`Unsigned`, :class:`Signed`,
     :class:`Ufixed`, :class:`Sfixed`, or :class:`Float`.
     """
 
@@ -178,7 +187,7 @@ class Number(Protocol):
 @runtime_checkable
 class Integer(Number, Protocol):
     r"""
-    A integer type
+    Protocol for an integer-like type that support arithmetic and bitwise logical operations
 
     Integers are :class:`Number`\ s that support bitwise logical operators and shifting.
     Specifically designed to allow writing generic functions that work with

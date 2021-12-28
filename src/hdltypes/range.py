@@ -54,7 +54,7 @@ class Range(Sequence[int]):
         0
 
     .. note::
-        This is only possible when specifying the direction.
+        Null ranges are only possible when specifying the direction.
 
     Ranges implement all the features of :py:class:`~collections.abc.Sequence` protocol
     and are hashable and equatable.
@@ -83,18 +83,14 @@ class Range(Sequence[int]):
     """
 
     @overload
-    def __init__(self, left: int, direction: int) -> None:
-        ...
-
-    @overload
     def __init__(self, left: int, direction: str, right: int) -> None:
         ...
 
     @overload
-    def __init__(self, left: int, *, right: int) -> None:
+    def __init__(self, left: int, right: int) -> None:
         ...
 
-    def __init__(
+    def __init__(  # type: ignore
         self,
         left: int,
         direction: Optional[Union[int, str]] = None,

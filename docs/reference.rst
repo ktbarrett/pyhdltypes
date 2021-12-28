@@ -7,12 +7,20 @@ Abstract Types
 
 Abstract Base Classes and Protocols for enforcing or checking type capabilities.
 
-.. autodata:: hdltypes.types.Self
+.. note::
+    When it comes to TypeVars
 
-.. autoclass:: hdltypes.types.Logic
+.. autoclass:: hdltypes.types.AbstractConstArray
     :members:
-    :undoc-members:
-    :special-members: __and__, __rand__, __or__, __ror__, __xor__, __rxor__, __invert__
+
+.. autoclass:: hdltypes.types.AbstractArray
+    :members:
+
+.. autoclass:: hdltypes.types.Number
+    :members:
+
+.. autoclass:: hdltypes.types.Integer
+    :members:
 
 Logic Types
 ===========
@@ -28,9 +36,29 @@ Value types that implement the :class:`~hdltypes.types.Logic` protocol.
 .. autoclass:: hdltypes.logic.Bit
     :members:
 
-Utility Types
-=============
+Array and Range Types
+=====================
 
 .. autoclass:: hdltypes.range.Range
     :members:
 
+.. autoclass:: hdltypes.array.Array
+    :members:
+    :inherited-members:
+
+Logic Array Types
+=================
+
+.. autoclass:: hdltypes.logic_array.LogicArrayBase
+    :members:
+    :show-inheritance:
+    :inherited-members:
+
+.. autoclass:: hdltypes.logic_array.StdLogicArray
+    :show-inheritance:
+
+.. autoclass:: hdltypes.logic_array.X01ZArray
+    :show-inheritance:
+
+.. autoclass:: hdltypes.logic_array.BitArray
+    :show-inheritance:

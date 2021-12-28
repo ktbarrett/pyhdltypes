@@ -1,4 +1,3 @@
-sphinx  ~= 4.0
+sphinx
 sphinx-rtd-theme
 sphinxcontrib-spelling
-docutils == 0.16  # bug in RTD requires we pin this
