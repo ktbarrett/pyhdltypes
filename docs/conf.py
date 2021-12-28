@@ -48,6 +48,10 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # Hides toctree from index
 master_doc = "contents"
 
+# Do not show module names on types, all type names are unique so this isn't necessary
+add_module_names = False
+python_use_unqualified_type_names = True
+
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -63,7 +67,6 @@ html_static_path = []
 # -- Autodoc configuration ---------------------------------------------------
 
 autodoc_member_order = "bysource"
-python_use_unqualified_type_names = True
 
 # -- Intersphinx configuration -----------------------------------------------
 

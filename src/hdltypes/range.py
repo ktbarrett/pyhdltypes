@@ -7,16 +7,11 @@ from typing import Optional, Sequence, Union, overload
 
 class Range(Sequence[int]):
     r"""
-    Variant of :class:`range` with inclusive right bound.
+    Integer range with inclusive right bound.
 
-    In Python, :class:`range` and :class:`slice` have a non-inclusive right bound.
-    However, in both Verilog and VHDL, ranges and arrays have an inclusive right bound.
-    This type mimics Python's :class:`range` type,
-    but implements HDL-like inclusive right bounds,
-    using the names :attr:`left` and :attr:`right` instead of ``start`` and ``stop`` to
-    mimic VHDL.
-    Range direction can be specified using ``'to'`` or ``'downto'`` between the left
-    and right bounds.
+    This type mimics Python's :class:`range` type, but uses inclusive right bounds as seen in VHDL and Verilog.
+    The atributes :attr:`left` and :attr:`right` are used instead of ``start`` and ``stop`` to mimic VHDL.
+    Range direction can be specified using ``'to'`` or ``'downto'`` between the left and right bounds.
     Not specifying a direction will cause the direction to be inferred.
 
     .. code-block:: python3
@@ -29,8 +24,7 @@ class Range(Sequence[int]):
         >>> s.left, s.right, len(s)
         (8, 1, 8)
 
-    :meth:`from_range` and :meth:`to_range` can be used to convert from and to
-    :class:`range`.
+    :meth:`from_range` and :meth:`to_range` can be used to convert from and to :py:class:`range`.
 
     .. code-block:: python3
 
@@ -39,11 +33,8 @@ class Range(Sequence[int]):
         >>> hdl_range.to_range()
         range(-2, 4)
 
-    :class:`Range` supports "null" ranges as seen in VHDL.
-    "null" ranges occur when a left bound cannot reach a right bound in the given
-    direction.
-    They have a length of 0, but the :attr:`left`, :attr:`right`, and :attr:`direction`
-    values remain as given.
+    "Null" ranges, as seen in VHDL, occur when a left bound cannot reach a right bound in the given direction.
+    They have a length of 0, but the :attr:`left`, :attr:`right`, and :attr:`direction` values remain as given.
 
     .. code-block:: python3
 
@@ -54,10 +45,9 @@ class Range(Sequence[int]):
         0
 
     .. note::
-        This is only possible when specifying the direction.
+        Null ranges are only possible when specifying the direction.
 
-    Ranges implement all the features of :py:class:`~collections.abc.Sequence` protocol
-    and are hashable and equatable.
+    Ranges implement all the features of :py:class:`~collections.abc.Sequence` protocol and are hashable and equatable.
 
     .. code-block:: python3
 
@@ -83,18 +73,14 @@ class Range(Sequence[int]):
     """
 
     @overload
-    def __init__(self, left: int, direction: int) -> None:
-        ...
-
-    @overload
     def __init__(self, left: int, direction: str, right: int) -> None:
         ...
 
     @overload
-    def __init__(self, left: int, *, right: int) -> None:
+    def __init__(self, left: int, right: int) -> None:
         ...
 
-    def __init__(
+    def __init__(  # type: ignore
         self,
         left: int,
         direction: Optional[Union[int, str]] = None,

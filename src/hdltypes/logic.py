@@ -15,6 +15,10 @@ Self = TypeVar("Self", bound="StdLogic")
 # A subtype must inherit from StdLogic, or a known subclass of StdLogic.
 # The subtype will define a `__values__` class attribute that is a non-empty list of
 # the StdLogic value representations listed directly below.
+#
+# Addendum: You can make existing types act as subtypes of new types using ABC.register, but mypy doesn't like it.
+# For example, you can define `class UX01Z(StdLogic)`, then do `UX01Z.register(X01Z)` so that X01Z acts as a subtype of
+# the newly-defined UX01Z type.
 
 
 _U = 0
@@ -32,10 +36,8 @@ class StdLogic:
     """
     A 9-value logic type
 
-    The values of this types are: ``U``, ``X``, ``0``, ``1``, ``Z``, ``W``, ``L``,
-    ``H``, and ``-``.
-    The value and semantics of this type are defined in IEEE 1164 and are similar to the
-    ``std_ulogic`` type in VHDL.
+    The values of this types are: ``U``, ``X``, ``0``, ``1``, ``Z``, ``W``, ``L``, ``H``, and ``-``.
+    The value and semantics of this type are defined in IEEE 1164 and are similar to the ``std_ulogic`` type in VHDL.
 
     StdLogics are constructable from string literals or are copy constructable from any subclass.
 
@@ -46,9 +48,8 @@ class StdLogic:
         >>> StdLogic(X01Z("Z"))  # convert subtype
         StdLogic('Z')
 
-    StdLogics support logical operations ``&``, ``|``, ``^``, and ``~``;
-    and can be used in logical operations with subtypes,
-    which will return the widest of the two types.
+    StdLogics support logical operations ``&``, ``|``, ``^``, and ``~``.
+    They can be used in logical operations with subtypes, which will return the widest of the two types.
 
     .. code-block:: python3
 
@@ -59,10 +60,8 @@ class StdLogic:
         >>> ~StdLogic("L")
         StdLogic('1')
 
-    StdLogic supports creating subtypes (like :class:`X01Z` and :class:`Bit`);
-    see the module file for more details.
-    Values of a subtype of StdLogic will hash the same and equate, so that they behave
-    as proper subtypes.
+    StdLogic supports creating subtypes (like :class:`X01Z` and :class:`Bit`); see the module file for more details.
+    Values of a subtype of StdLogic will hash the same and equate, so that they behave as proper subtypes.
     This results in what may seem like atypical behavior, but it is type-safe.
 
     .. code-block:: python3
@@ -163,9 +162,7 @@ class X01Z(StdLogic):
     A 4-value logic type
 
     A subtype of :class:`StdLogic`;
-    supporting all the same operations, but only the values ``X``, ``0``, ``1``, and
-    ``Z``.
-    The default value is ``X``.
+    supporting all the same operations, but only the values ``X``, ``0``, ``1``, and ``Z``.
     Similar to ``X01Z`` from VHDL, or ``logic`` from Verilog.
     """
 
@@ -178,7 +175,6 @@ class Bit(X01Z):
 
     A subtype of :class:`StdLogic` and :class:`X01Z`;
     supporting all the same operations, but only the values ``0`` and ``1``.
-    The default value is ``0``.
     Similar to ``bit`` from VHDL or Verilog, or :py:class:`bool`.
     """
 
