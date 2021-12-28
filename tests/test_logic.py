@@ -15,6 +15,10 @@ def test_construct() -> None:
         X01Z(StdLogic("L"))
     with pytest.raises(ValueError):
         Bit("x")
+    with pytest.raises(TypeError):
+        StdLogic(object())  # type: ignore
+    with pytest.raises(ValueError):
+        X01Z("lol")
 
 
 def test_convert() -> None:
@@ -69,11 +73,11 @@ def test_hash() -> None:
 
 def test_promotion() -> None:
     assert type(StdLogic("0") & StdLogic("0")) is StdLogic
-    assert type(StdLogic("0") & X01Z("0")) is StdLogic
-    assert type(StdLogic("0") & Bit("0")) is StdLogic
+    assert type(StdLogic("0") | X01Z("0")) is StdLogic
+    assert type(StdLogic("0") ^ Bit("0")) is StdLogic
     assert type(X01Z("0") & StdLogic("0")) is StdLogic
-    assert type(X01Z("0") & X01Z("0")) is X01Z
-    assert type(X01Z("0") & Bit("0")) is X01Z
+    assert type(X01Z("0") | X01Z("0")) is X01Z
+    assert type(X01Z("0") ^ Bit("0")) is X01Z
     assert type(Bit("0") & StdLogic("0")) is StdLogic
-    assert type(Bit("0") & X01Z("0")) is X01Z
-    assert type(Bit("0") & Bit("0")) is Bit
+    assert type(Bit("0") | X01Z("0")) is X01Z
+    assert type(Bit("0") ^ Bit("0")) is Bit

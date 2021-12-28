@@ -94,14 +94,23 @@ class StdLogic:
         if isinstance(value, StdLogic):
             # convert subtype
             _repr = value._repr
-        else:
+            if _repr not in cls.__values__:
+                raise ValueError(f"{value!r} not in {cls.__qualname__}")
+            else:
+                return cls._make(_repr)
+        elif isinstance(value, str):
             # convert literal
             _repr = _literal_repr.get(value)
-        if _repr is None or _repr not in cls.__values__:
-            raise ValueError(
-                f"{value!r} is not constructible into a {cls.__qualname__}"
+            if _repr is None:
+                raise ValueError("invalid literal value")
+            elif _repr not in cls.__values__:
+                raise ValueError(f"literal {value!r} not in {cls.__qualname__}")
+            else:
+                return cls._make(_repr)
+        else:
+            raise TypeError(
+                f"{type(value).__qualname__!r} object is not constructible into a {cls.__qualname__}"
             )
-        return cls._make(_repr)
 
     if not TYPE_CHECKING:
         # mypy doesn't like using lru_cache on __new__

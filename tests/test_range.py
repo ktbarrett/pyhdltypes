@@ -66,6 +66,11 @@ def test_null_range() -> None:
     assert r.count(4) == 0
 
 
+def test_bad_arguments() -> None:
+    with pytest.raises(TypeError):
+        Range(1, "to")  # type: ignore
+
+
 def test_equality() -> None:
     assert Range(7, "downto", -7) == Range(7, "downto", -7)
     assert Range(7, "downto", -7) != Range(0, "to", 8)
@@ -109,6 +114,16 @@ def test_bad_direction() -> None:
         Range(1, "nope", 8)
 
 
+def test_bad_bound() -> None:
+    with pytest.raises(TypeError):
+        Range(object(), "to", 8)  # type: ignore
+
+
 def test_bad_step() -> None:
     with pytest.raises(ValueError):
         Range.from_range(range(10, 5, -2))
+
+
+def test_bad_getitem() -> None:
+    with pytest.raises(TypeError):
+        Range(10, "downto", 4)["8"]  # type: ignore
