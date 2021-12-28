@@ -9,8 +9,95 @@ Self = TypeVar("Self", bound="Array[object]")
 
 
 class Array(AbstractArray[T]):
-    """
-    Type-generic fixed-length mutable Array type
+    r"""
+    Type-generic fixed-length mutable sequence type.
+
+    Arrays are capable of holding any type.
+    Like :py:class:`list` and :py:class:`tuple`, they are initialized with any :py:term:`iterable`.
+
+    .. code-block:: python3
+
+        >>> Array([123, 456])
+        Array([123, 456], Range(0, 'to', 1))
+        >>> Array("abc")
+        Array(['a', 'b', 'c'], Range(0, 'to', 2))
+
+    Unlike :py:class:`list` and :py:class:`tuple`, arrays can use arbitrary indexing scheme;
+    not just 0 to length-1.
+    The indexing scheme is described using a :class:`~hdltypes.range.Range`.
+    The left most index of the array is the first value of the range.
+    The right most index of the array is the last value of the range.
+    If no range is given, it is defaulted to ``Range(0, 'to', len(value) - 1)``.
+
+    .. code-block:: python3
+
+        >>> a = Array("abcd", Range(4, "downto", 1))
+        >>> a[4]
+        'a'
+        >>> a[1]
+        'd'
+
+    Slicing an array returns a new array with the specified indexes.
+    Right bounds in slices are inclusive, just like ranges.
+    If no left bound is given, it is assumed to be the left-most index.
+    If no right bound is give, it is assumed to be the right-most index.
+
+    .. code-block:: python3
+
+        >>> a = Array([0, 1, 2, "a", "b", "c"])
+        >>> a[2:4]
+        Array([2, 'a', 'b'], Range(2, 'to', 4))
+        >>> a[:2]
+        Array([0, 1, 2], Range(0, 'to', 2))
+        >>> a[5:]
+        Array(['c'], Range(5, 'to', 5))
+
+    Arrays have a fixed size once created, but the elements of the array can be changed.
+    Setting a slice requires the new value be an iterable with the same length as the slice.
+
+    .. code-block:: python3
+
+        >>> a = Array("abcd", Range(4, "downto", 1))
+        >>> a[2] = 8
+        >>> a
+        Array(['a', 'b', 8, 'd'], Range(4, 'downto', 1))
+        >>> a[:] = [1, 2, 3, 4]
+        >>> a
+        Array([1, 2, 3, 4], Range(4, 'downto', 1))
+
+    Arrays are a lot like Python's :class:`list` type and support many of the same operations,
+    including: :py:func:`len`, iteration, reverse iteration, and testing a value for inclusion in the array, equality,
+    and more.
+
+    .. code-block:: python3
+
+        >>> a = Array("1234")
+        >>> len(a)
+        4
+        >>> list(a)
+        ['1', '2', '3', '4']
+        >>> a[:] = reversed(a)
+        >>> a
+        Array(['4', '3', '2', '1'], Range(0, 'to', 3))
+        >>> '3' in a
+        True
+        >>> Array("123") == Array("123", Range(2, 'downto', 0))  # range doesn't matter for equality
+        True
+
+    Arrays support concatenation with other arrays.
+
+    .. code-block:: python3
+
+        >>> Array("123") + Array("456")
+        Array(['1', '2', '3', '4', '5', '6'], Range(0, 'to', 5))
+
+    .. warning::
+        Arrays are not :py:term:`sequence`\ s because they do not assume 0-based indexing.
+        Beware passing arrays to any function that take sequences.
+
+    Args:
+        * value: any iterable to initialize the array.
+        * range: the indexing scheme to use with the array, defaults to ``Range(0, 'to', len(value) - 1)``.
     """
 
     def __init__(self, value: Iterable[T], range: Optional[Range] = None) -> None:
@@ -47,7 +134,8 @@ class Array(AbstractArray[T]):
             left_idx = self._index(left)
             right_idx = self._index(right)
             return type(self)(
-                self._value[left_idx:right_idx], Range(left, self.direction, right)
+                self._value[left_idx : right_idx + 1],
+                Range(left, self.direction, right),
             )
         else:
             raise TypeError(
@@ -75,29 +163,21 @@ class Array(AbstractArray[T]):
             left_idx = self._index(left)
             right_idx = self._index(right)
             value = tuple(cast(Iterable[T], value))
-            if len(value) != len(range(left_idx, right_idx)):
+            if len(value) != len(range(left_idx, right_idx + 1)):
                 raise ValueError(
-                    f"cannot value of length {len(value)} in slice [{left}:{right}]"
+                    f"cannot fit value of length {len(value)} in slice [{left}:{right}]"
                 )
-            self._value[left_idx:right_idx] = value
+            self._value[left_idx : right_idx + 1] = value
         else:
             raise TypeError(
                 f"expected index to be of type int or slice, not {type(item).__qualname__}"
             )
 
-    @overload
-    def concat(self: Self, other: T) -> Self:
-        ...
-
-    @overload
-    def concat(self: Self, other: Self) -> Self:
-        ...
-
-    def concat(self: Self, other: Union[T, Self]) -> Self:
-        if not isinstance(other, type(self)):
-            return type(self)(chain(self, (other,)))
-        else:
+    def __add__(self: Self, other: Self) -> Self:
+        if isinstance(other, type(self)):
             return type(self)(chain(self, other))
+        else:
+            return NotImplemented
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, type(self)):
