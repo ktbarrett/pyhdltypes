@@ -39,12 +39,16 @@ Array and Range Types
 .. autoclass:: hdltypes.range.Range
     :members:
 
+.. autoclass:: hdltypes.array.ConstArray
+
 .. autoclass:: hdltypes.array.Array
     :members:
     :inherited-members:
 
 Logic Array Types
 =================
+
+.. autoclass:: hdltypes.logic_array.ConstLogicArrayBase
 
 .. autoclass:: hdltypes.logic_array.LogicArrayBase
     :members:

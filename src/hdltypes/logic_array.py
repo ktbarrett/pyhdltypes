@@ -1,14 +1,14 @@
 from itertools import chain
 from typing import Iterable, Optional, Type, TypeVar, Union, cast, overload
 
-from hdltypes.array import Array
+from hdltypes.array import Array, ConstArray
 from hdltypes.logic import X01Z, Bit, LogicConstructibleT, StdLogic
 from hdltypes.range import Range
-from hdltypes.types import AbstractConstArray
 
 LogicArrayConstructibleT = Union[str, Iterable[StdLogic]]
 LogicT = TypeVar("LogicT", bound=StdLogic)
-Self = TypeVar("Self", bound="LogicArrayBase[StdLogic]")
+LogicT_co = TypeVar("LogicT_co", bound=StdLogic, covariant=True)
+Self = TypeVar("Self", bound="ConstLogicArrayBase[StdLogic]")
 
 
 # DEFINING SUBTYPES OF LOGICARRAYBASE
@@ -24,7 +24,76 @@ Self = TypeVar("Self", bound="LogicArrayBase[StdLogic]")
 # as a subtype of UX01ZArray.
 
 
-class LogicArrayBase(Array[LogicT]):
+class ConstLogicArrayBase(ConstArray[LogicT_co]):
+    """
+    Immutable version of :class:`~hdltypes.logic_array.LogicArrayBase`.
+    """
+
+    _element_type: Type[LogicT_co]  # change to ClassVar (python/mypy#5144)
+
+    def __init__(
+        self, value: LogicArrayConstructibleT, range: Optional[Range] = None
+    ) -> None:
+        element_type = type(self)._element_type
+        super().__init__(value=(element_type(v) for v in value), range=range)
+
+    def __and__(self: Self, other: "ConstLogicArrayBase[LogicT_co]") -> Self:
+        if isinstance(other, type(self)):
+            if len(self) != len(other):
+                raise ValueError("Can't combine arrays of different length")
+            else:
+                return type(self)(a & b for a, b in zip(self, other))  # type: ignore
+        else:
+            return NotImplemented
+
+    def __rand__(self: Self, other: "ConstLogicArrayBase[LogicT_co]") -> Self:
+        return self & other
+
+    def __or__(self: Self, other: "ConstLogicArrayBase[LogicT_co]") -> Self:
+        if isinstance(other, type(self)):
+            if len(self) != len(other):
+                raise ValueError("Can't combine arrays of different length")
+            else:
+                return type(self)(a | b for a, b in zip(self, other))  # type: ignore
+        else:
+            return NotImplemented
+
+    def __ror__(self: Self, other: "ConstLogicArrayBase[LogicT_co]") -> Self:
+        return self | other
+
+    def __xor__(self: Self, other: "ConstLogicArrayBase[LogicT_co]") -> Self:
+        if isinstance(other, type(self)):
+            if len(self) != len(other):
+                raise ValueError("Can't combine arrays of different length")
+            else:
+                return type(self)(a ^ b for a, b in zip(self, other))  # type: ignore
+        else:
+            return NotImplemented
+
+    def __rxor__(self: Self, other: "ConstLogicArrayBase[LogicT_co]") -> Self:
+        return self ^ other
+
+    def __invert__(self: Self) -> Self:
+        return type(self)(~v for v in self)
+
+    def __add__(self: Self, other: "ConstLogicArrayBase[LogicT_co]") -> Self:
+        if isinstance(other, type(self)):
+            return type(self)(chain(self, other))
+        else:
+            return NotImplemented
+
+    def __radd__(self: Self, other: "ConstLogicArrayBase[LogicT_co]") -> Self:
+        if isinstance(other, type(self)):
+            return type(self)(chain(other, self))
+        else:
+            return NotImplemented
+
+    def __repr__(self) -> str:
+        value_str = "".join(str(v) for v in self)
+        return f"{type(self).__qualname__}({value_str!r}, {self._range!r})"
+
+
+class LogicArrayBase(ConstLogicArrayBase[LogicT], Array[LogicT]):
     """
     Generic Array of StdLogic which supports bitwise logic operators.
 
@@ -54,14 +123,6 @@ class LogicArrayBase(Array[LogicT]):
     Creating additional subtypes is supported; see the module file for details.
     """
 
-    _element_type: Type[LogicT]  # change to ClassVar (python/mypy#5144)
-
-    def __init__(
-        self, value: LogicArrayConstructibleT, range: Optional[Range] = None
-    ) -> None:
-        element_type = type(self)._element_type
-        super().__init__(value=(element_type(v) for v in value), range=range)
-
     @overload
     def __setitem__(self, item: int, value: LogicConstructibleT) -> None:
         ...
@@ -86,61 +147,6 @@ class LogicArrayBase(Array[LogicT]):
             raise TypeError(
                 f"expected index to be of type int or slice, not {type(item).__qualname__}"
             )
-
-    def __and__(self: Self, other: AbstractConstArray[LogicT]) -> Self:
-        if isinstance(other, type(self)):
-            if len(self) != len(other):
-                raise ValueError("Can't combine arrays of different length")
-            else:
-                return type(self)(a & b for a, b in zip(self, other))  # type: ignore
-        else:
-            return NotImplemented
-
-    def __rand__(self: Self, other: AbstractConstArray[LogicT]) -> Self:
-        return self & other
-
-    def __or__(self: Self, other: AbstractConstArray[LogicT]) -> Self:
-        if isinstance(other, type(self)):
-            if len(self) != len(other):
-                raise ValueError("Can't combine arrays of different length")
-            else:
-                return type(self)(a | b for a, b in zip(self, other))  # type: ignore
-        else:
-            return NotImplemented
-
-    def __ror__(self: Self, other: AbstractConstArray[LogicT]) -> Self:
-        return self | other
-
-    def __xor__(self: Self, other: AbstractConstArray[LogicT]) -> Self:
-        if isinstance(other, type(self)):
-            if len(self) != len(other):
-                raise ValueError("Can't combine arrays of different length")
-            else:
-                return type(self)(a ^ b for a, b in zip(self, other))  # type: ignore
-        else:
-            return NotImplemented
-
-    def __rxor__(self: Self, other: AbstractConstArray[LogicT]) -> Self:
-        return self ^ other
-
-    def __invert__(self: Self) -> Self:
-        return type(self)(~v for v in self)
-
-    def __add__(self: Self, other: AbstractConstArray[LogicT]) -> Self:
-        if isinstance(other, type(self)):
-            return type(self)(chain(self, other))
-        else:
-            return NotImplemented
-
-    def __radd__(self: Self, other: AbstractConstArray[LogicT]) -> Self:
-        if isinstance(other, type(self)):
-            return type(self)(chain(other, self))
-        else:
-            return NotImplemented
-
-    def __repr__(self) -> str:
-        value_str = "".join(str(v) for v in self)
-        return f"{type(self).__qualname__}({value_str!r}, {self._range!r})"
 
 
 class StdLogicArray(LogicArrayBase[StdLogic]):

@@ -1,15 +1,91 @@
 from itertools import chain
-from typing import Any, Iterable, Optional, TypeVar, Union, cast, overload
+from typing import Iterable, Optional, TypeVar, Union, cast, overload
 
 from hdltypes.range import Range
-from hdltypes.types import AbstractArray
+from hdltypes.types import AbstractArray, AbstractConstArray
 
 T = TypeVar("T")
-Self = TypeVar("Self", bound="Array[Any]")
-# `Any` is not the correct parameter for Self, `object` is better, bug in mypy prevents this
+T_co = TypeVar("T_co", covariant=True)
+Self = TypeVar("Self", bound="ConstArray[object]")
 
 
-class Array(AbstractArray[T]):
+class ConstArray(AbstractConstArray[T_co]):
+    """
+    Immutable version of :class:`~hdltypes.array.Array`.
+    """
+
+    def __init__(self, value: Iterable[T_co], range: Optional[Range] = None) -> None:
+        self._value = list(value)
+        if range is None:
+            self._range = Range(0, "to", len(self._value) - 1)
+        else:
+            self._range = range
+            if len(self._value) != len(self._range):
+                raise ValueError(
+                    f"value of length {len(self._value)} does not fit in {self._range!r}"
+                )
+
+    @property
+    def range(self) -> Range:
+        return self._range
+
+    @overload
+    def __getitem__(self: Self, item: int) -> T_co:
+        ...
+
+    @overload
+    def __getitem__(self: Self, item: slice) -> Self:
+        ...
+
+    def __getitem__(self: Self, item: Union[int, slice]) -> Union[T_co, Self]:
+        if isinstance(item, int):
+            return cast(T_co, self._value[self._index(item)])
+        elif isinstance(item, slice):
+            if item.step is not None:
+                raise IndexError("do not specify the step in the index")
+            left = item.start if item.start is not None else self.left
+            right = item.stop if item.stop is not None else self.right
+            range = Range(left, self.direction, right)
+            if len(range) == 0:
+                raise IndexError(
+                    f"slice '[{left}:{right}]' direction does not match array direction {self.direction!r}"
+                )
+            left_idx = self._index(left)
+            right_idx = self._index(right)
+            return type(self)(
+                value=self._value[left_idx : right_idx + 1],
+                range=range,
+            )
+        else:
+            raise TypeError(
+                f"expected index to be of type int or slice, not {type(item).__qualname__}"
+            )
+
+    def __add__(self: Self, other: Self) -> Self:
+        if isinstance(other, type(self)):
+            return type(self)(chain(self, other))
+        else:
+            return NotImplemented
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, type(self)):
+            return self._value == other._value
+        else:
+            return NotImplemented
+
+    __hash__: None  # type: ignore
+
+    def __repr__(self) -> str:
+        return f"{type(self).__qualname__}({self._value!r}, {self._range!r})"
+
+    def _index(self, index: int) -> int:
+        try:
+            return self.range.index(index)
+        except ValueError:
+            raise IndexError(f"index {index} out of range {self.range}") from None
+
+
+class Array(ConstArray[T], AbstractArray[T]):
     r"""
     Type-generic fixed-length mutable sequence type.
 
@@ -101,53 +177,6 @@ class Array(AbstractArray[T]):
         * range: the indexing scheme to use with the array, defaults to ``Range(0, 'to', len(value) - 1)``.
     """
 
-    def __init__(self, value: Iterable[T], range: Optional[Range] = None) -> None:
-        self._value = list(value)
-        if range is None:
-            self._range = Range(0, "to", len(self._value) - 1)
-        else:
-            self._range = range
-            if len(self._value) != len(self._range):
-                raise ValueError(
-                    f"value of length {len(self._value)} does not fit in {self._range!r}"
-                )
-
-    @property
-    def range(self) -> Range:
-        return self._range
-
-    @overload
-    def __getitem__(self: Self, item: int) -> T:
-        ...
-
-    @overload
-    def __getitem__(self: Self, item: slice) -> Self:
-        ...
-
-    def __getitem__(self: Self, item: Union[int, slice]) -> Union[T, Self]:
-        if isinstance(item, int):
-            return cast(T, self._value[self._index(item)])
-        elif isinstance(item, slice):
-            if item.step is not None:
-                raise IndexError("do not specify the step in the index")
-            left = item.start if item.start is not None else self.left
-            right = item.stop if item.stop is not None else self.right
-            range = Range(left, self.direction, right)
-            if len(range) == 0:
-                raise IndexError(
-                    f"slice '[{left}:{right}]' direction does not match array direction {self.direction!r}"
-                )
-            left_idx = self._index(left)
-            right_idx = self._index(right)
-            return type(self)(
-                value=self._value[left_idx : right_idx + 1],
-                range=range,
-            )
-        else:
-            raise TypeError(
-                f"expected index to be of type int or slice, not {type(item).__qualname__}"
-            )
-
     @overload
     def __setitem__(self, item: int, value: T) -> None:
         ...
@@ -183,26 +212,3 @@ class Array(AbstractArray[T]):
             raise TypeError(
                 f"expected index to be of type int or slice, not {type(item).__qualname__}"
             )
-
-    def __add__(self: Self, other: Self) -> Self:
-        if isinstance(other, type(self)):
-            return type(self)(chain(self, other))
-        else:
-            return NotImplemented
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, type(self)):
-            return self._value == other._value
-        else:
-            return NotImplemented
-
-    __hash__: None  # type: ignore
-
-    def __repr__(self) -> str:
-        return f"{type(self).__qualname__}({self._value!r}, {self._range!r})"
-
-    def _index(self, index: int) -> int:
-        try:
-            return self.range.index(index)
-        except ValueError:
-            raise IndexError(f"index {index} out of range {self.range}") from None
