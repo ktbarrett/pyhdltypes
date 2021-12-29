@@ -23,3 +23,7 @@ hashable
 Args
 Roadmap
 Github
+bitwise
+downto
+iterable
+constructable

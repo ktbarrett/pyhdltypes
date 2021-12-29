@@ -10,7 +10,7 @@ class Range(Sequence[int]):
     Integer range with inclusive right bound.
 
     This type mimics Python's :class:`range` type, but uses inclusive right bounds as seen in VHDL and Verilog.
-    The atributes :attr:`left` and :attr:`right` are used instead of ``start`` and ``stop`` to mimic VHDL.
+    The attributes :attr:`left` and :attr:`right` are used instead of ``start`` and ``stop`` to mimic VHDL.
     Range direction can be specified using ``'to'`` or ``'downto'`` between the left and right bounds.
     Not specifying a direction will cause the direction to be inferred.
 
