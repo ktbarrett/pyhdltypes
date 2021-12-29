@@ -1,11 +1,12 @@
 from itertools import chain
-from typing import Iterable, Optional, TypeVar, Union, cast, overload
+from typing import Any, Iterable, Optional, TypeVar, Union, cast, overload
 
 from hdltypes.range import Range
 from hdltypes.types import AbstractArray
 
 T = TypeVar("T")
-Self = TypeVar("Self", bound="Array[object]")
+Self = TypeVar("Self", bound="Array[Any]")
+# `Any` is not the correct parameter for Self, `object` is better, bug in mypy prevents this
 
 
 class Array(AbstractArray[T]):
@@ -127,15 +128,20 @@ class Array(AbstractArray[T]):
         if isinstance(item, int):
             return cast(T, self._value[self._index(item)])
         elif isinstance(item, slice):
+            if item.step is not None:
+                raise IndexError("do not specify the step in the index")
             left = item.start if item.start is not None else self.left
             right = item.stop if item.stop is not None else self.right
-            if item.step is not None:
-                raise ValueError("do not specify the step in the index")
+            range = Range(left, self.direction, right)
+            if len(range) == 0:
+                raise IndexError(
+                    f"slice '[{left}:{right}]' direction does not match array direction {self.direction!r}"
+                )
             left_idx = self._index(left)
             right_idx = self._index(right)
             return type(self)(
-                self._value[left_idx : right_idx + 1],
-                Range(left, self.direction, right),
+                value=self._value[left_idx : right_idx + 1],
+                range=range,
             )
         else:
             raise TypeError(
@@ -156,17 +162,22 @@ class Array(AbstractArray[T]):
         if isinstance(item, int):
             self._value[self._index(item)] = cast(T, value)
         elif isinstance(item, slice):
+            if item.step is not None:
+                raise IndexError("do not specify the step in the index")
             left = item.start if item.start is not None else self.left
             right = item.stop if item.stop is not None else self.right
-            if item.step is not None:
-                raise ValueError("do not specify the step in the index")
-            left_idx = self._index(left)
-            right_idx = self._index(right)
+            range = Range(left, self.direction, right)
             value = tuple(cast(Iterable[T], value))
-            if len(value) != len(range(left_idx, right_idx + 1)):
+            if len(range) == 0:
+                raise IndexError(
+                    f"slice '[{left}:{right}]' direction does not match array direction {self.direction!r}"
+                )
+            if len(value) != len(range):
                 raise ValueError(
                     f"cannot fit value of length {len(value)} in slice [{left}:{right}]"
                 )
+            left_idx = self._index(left)
+            right_idx = self._index(right)
             self._value[left_idx : right_idx + 1] = value
         else:
             raise TypeError(
